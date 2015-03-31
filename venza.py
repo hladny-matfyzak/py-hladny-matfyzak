@@ -7,7 +7,7 @@ import datetime
 def horna(day = None, month = None):
     year = time.strftime("%Y")
     if day != None and month != None:
-        lin = "http://hladnystudent.zones.sk/jedalne-listky-"+str(day)+"-"+str(month)+"-"+str(year)
+        lin = '{0},{1},{2},{3}'.format('http://hladnystudent.zones.sk/jedalne-listky-',day,month,year)
         url = urllib2.urlopen(lin)        
     else :
         url = urllib2.urlopen("http://hladnystudent.zones.sk/")
@@ -34,7 +34,7 @@ def dolna(day = None, month = None):
     weekday = time.strftime("%w")
     weekday = int(weekday)
     if day != None and month != None:
-        lin = "http://hladnystudent.zones.sk/jedalne-listky-"+str(day)+"-"+str(month)+"-"+str(year)
+        lin = '{0},{1},{2},{3}'.format('http://hladnystudent.zones.sk/jedalne-listky-',day,month,year)
         day = int(day)
         year = int(year)
         month = int(month)
@@ -54,18 +54,13 @@ def dolna(day = None, month = None):
     tables = soup.find_all('table')
     dolnasoup = BeautifulSoup(str(tables[2])) 
     trs_dolna = dolnasoup.find_all('tr')
-    
 
     for i in range (1,trs_dolna.__len__()):        
         dtd = str(trs_dolna[i])
         dtdsoup = BeautifulSoup(dtd)
         dbordel = dtdsoup.find_all('td')
-        
 
         dmatch = re.findall(r'<td>(.*?)<span',str(dbordel[1]),re.DOTALL)
         dbettermatch = re.findall(r'\n\s\s\s\s\s\s\s\s(.*?)\n',dmatch[0])
         list.append(dbettermatch[0])
     return list
-
-
-
