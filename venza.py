@@ -67,6 +67,5 @@ def dolna(day = None, month = None):
         list.append(dbettermatch[0])
     return list
 
-print(horna())
-#print(dolna())
+
 
