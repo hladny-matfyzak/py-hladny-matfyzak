@@ -5,13 +5,16 @@ import time
 import datetime
 HS_URL = "http://hladnystudent.zones.sk"
 
-def horna(day = None, month = None):
-    year = time.strftime("%Y")
-    if day != None and month != None:
-        lin =HS_URL.format("/jedalne-listky-",day,month,year)
-        url = urllib2.urlopen(lin)        
-    else :
-        url = urllib2.urlopen(HS_URL)
+def horna(day = None, month = None, year = None):
+    if year == None:
+        year = time.strftime("%Y")
+    if month == None:
+        month = time.strftime("%m")
+    if day == None:
+        day = time.strftime("%d")
+    lin =HS_URL.format("/jedalne-listky-",day,month,year)
+    url = urllib2.urlopen(lin)        
+
     
     text = url.read()
     soup = BeautifulSoup(text)
@@ -29,27 +32,22 @@ def horna(day = None, month = None):
          list.append(bettermatch[0])
     return list
     
-def dolna(day = None, month = None):
+def dolna(day = None, month = None, year = None):
     list= []
-    year = time.strftime("%Y")
-    weekday = time.strftime("%w")
+    if year == None:
+        year = (int)(time.strftime("%Y"))
+    if day == None:
+        day = (int)(time.strftime("%d"))
+    if month == None:
+        month = (int)(time.strftime("%m"))
+    lin =HS_URL.format("/jedalne-listky-",day,month,year)
+    weekday = (datetime.date(year,month,day)).weekday()
     weekday = int(weekday)
-    if day != None and month != None:
-        lin =HS_URL.format("/jedalne-listky-",day,month,year)
-        day = int(day)
-        year = int(year)
-        month = int(month)
-        weekday = (datetime.date(year,month,day)).weekday()
-        weekday = int(weekday)
-        if weekday == 6 or weekday == 5:
-            list.append("Closed")
-            return list
-        url = urllib2.urlopen(lin)
-    else :
-        url = urllib2.urlopen(HS_URL)
-        if weekday == 6 or weekday == 0:
-            list.append("Closed")
-            return list
+    if weekday == 6 or weekday == 5:
+        list.append("Closed")
+        return list
+    url = urllib2.urlopen(lin)
+        
     text = url.read()
     soup = BeautifulSoup(text)
     tables = soup.find_all('table')
