@@ -19,7 +19,7 @@ def horna(day = None, month = None):
     list = []
     trs = hornasoup.find_all('tr')
 
-    for i in range (1,len(trs)-2):        
+    for i in range (1,len(trs)):        
          td = str(trs[i])
          tdsoup = BeautifulSoup(td)
          bordel = tdsoup.find_all('td')
@@ -68,5 +68,5 @@ def dolna(day = None, month = None):
     return list
 
 print(horna())
-print(dolna())
+#print(dolna())
 
