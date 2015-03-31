@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup
-import urllib2
+import requests
 import re
 import time
 import datetime
@@ -7,18 +7,18 @@ HS_URL = "http://hladnystudent.zones.sk/jedalne-listky-{}-{}-{}"
 
 
 def horna(day=None, month=None, year=None):
-    if year is None and year.isdigit():
+    if year is None or not year.isdigit():
         year = int(time.strftime("%Y"))
-    if day is None and day.isdigit():
+    if day is None or not day.isdigit():
         day = int(time.strftime("%d"))
-    if month is None and day.isdigit():
+    if month is None or not month.isdigit():
         month = int(time.strftime("%m"))
 
     lin = HS_URL.format(day, month, year)
-    url = urllib2.urlopen(lin)
 
-    text = url.read()
-    soup = BeautifulSoup(text)
+    req = requests.get(lin)
+
+    soup = BeautifulSoup(req.text)
     tables = soup.find_all('table')
     hornasoup = BeautifulSoup(str(tables[1]))
     list = []
@@ -36,23 +36,23 @@ def horna(day=None, month=None, year=None):
 
 def dolna(day=None, month=None, year=None):
     list = []
-    if year is None and year.isdigit():
+    if year is None or not year.isdigit():
         year = int(time.strftime("%Y"))
-    if day is None and day.isdigit():
+    if day is None or not day.isdigit():
         day = int(time.strftime("%d"))
-    if month is None and day.isdigit():
+    if month is None or not month.isdigit():
         month = int(time.strftime("%m"))
 
     lin = HS_URL.format(day, month, year)
-    weekday = (datetime.date(year, month, day)).weekday()
-    weekday = int(weekday)
-    if weekday == 6 or weekday == 5:
+
+    weekday = int((datetime.date(year, month, day)).weekday())
+    if weekday in [5, 6]:
         list.append("Closed")
         return list
-    url = urllib2.urlopen(lin)
 
-    text = url.read()
-    soup = BeautifulSoup(text)
+    req = requests.get(lin)
+
+    soup = BeautifulSoup(req.text)
     tables = soup.find_all('table')
     dolnasoup = BeautifulSoup(str(tables[2]))
     trs_dolna = dolnasoup.find_all('tr')
