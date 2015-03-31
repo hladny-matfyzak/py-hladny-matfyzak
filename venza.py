@@ -3,14 +3,16 @@ import urllib2
 import re
 import time
 import datetime
+HS_URL = "http://hladnystudent.zones.sk"
 
 def horna(day = None, month = None):
     year = time.strftime("%Y")
     if day != None and month != None:
-        lin = '{0},{1},{2},{3}'.format('http://hladnystudent.zones.sk/jedalne-listky-',day,month,year)
+        lin =HS_URL.format("/jedalne-listky-",day,month,year)
+        #lin = '{0},{1},{2},{3},{4}'.format(HS_URL,'/jedalne-listky-',day,month,year)
         url = urllib2.urlopen(lin)        
     else :
-        url = urllib2.urlopen("http://hladnystudent.zones.sk/")
+        url = urllib2.urlopen(HS_URL)
     
     text = url.read()
     soup = BeautifulSoup(text)
@@ -34,7 +36,8 @@ def dolna(day = None, month = None):
     weekday = time.strftime("%w")
     weekday = int(weekday)
     if day != None and month != None:
-        lin = '{0},{1},{2},{3}'.format('http://hladnystudent.zones.sk/jedalne-listky-',day,month,year)
+        lin =HS_URL.format("/jedalne-listky-",day,month,year)
+        #lin = '{0},{1},{2},{3},{4}'.format(HS_URL,'/jedalne-listky-',day,month,year)
         day = int(day)
         year = int(year)
         month = int(month)
@@ -45,7 +48,7 @@ def dolna(day = None, month = None):
             return list
         url = urllib2.urlopen(lin)
     else :
-        url = urllib2.urlopen("http://hladnystudent.zones.sk/")
+        url = urllib2.urlopen(HS_URL)
         if weekday == 6 or weekday == 0:
             list.append("Closed")
             return list
