@@ -26,13 +26,7 @@ def horna(day = None, month = None):
          match = re.findall(r'<td>(.*?)<span',str(bordel[1]),re.DOTALL)
          bettermatch = re.findall(r'\n\s\s\s\s\s\s\s\s(.*?)\n',match[0])
          list.append(bettermatch[0])
-    
-    ret = ""     
-    for i in range (1,list.__len__()):
-        ret+= list[i] + "  |  "
-        if i % 2 == 0:
-            ret += '\n'
-    return ret
+    return list
     
 def dolna(day = None, month = None):
     list= []
@@ -71,13 +65,7 @@ def dolna(day = None, month = None):
         dmatch = re.findall(r'<td>(.*?)<span',str(dbordel[1]),re.DOTALL)
         dbettermatch = re.findall(r'\n\s\s\s\s\s\s\s\s(.*?)\n',dmatch[0])
         list.append(dbettermatch[0])
-        
-    ret = ""     
-    for i in range (1,list.__len__()):
-        ret+= list[i] + "  |  "
-        if i % 2 == 0:
-            ret += '\n'
-    return ret
+    return list
 
 print(horna())
 print(dolna())
