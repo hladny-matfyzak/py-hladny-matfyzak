@@ -9,7 +9,6 @@ def horna(day = None, month = None):
     year = time.strftime("%Y")
     if day != None and month != None:
         lin =HS_URL.format("/jedalne-listky-",day,month,year)
-        #lin = '{0},{1},{2},{3},{4}'.format(HS_URL,'/jedalne-listky-',day,month,year)
         url = urllib2.urlopen(lin)        
     else :
         url = urllib2.urlopen(HS_URL)
@@ -37,7 +36,6 @@ def dolna(day = None, month = None):
     weekday = int(weekday)
     if day != None and month != None:
         lin =HS_URL.format("/jedalne-listky-",day,month,year)
-        #lin = '{0},{1},{2},{3},{4}'.format(HS_URL,'/jedalne-listky-',day,month,year)
         day = int(day)
         year = int(year)
         month = int(month)
