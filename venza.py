@@ -93,5 +93,4 @@ def ffood( which ,weekday=None):
     for i in range (0,len(meals)):
         if ((i % 2)==0):
             ret.append(meals[i])
-    return ret
-     
+    return ret   
