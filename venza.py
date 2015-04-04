@@ -94,3 +94,9 @@ def ffood(which,weekday=None):
         if ((i % 2)==0):
             ret.append(meals[i])
     return ret   
+    
+def faynfood(weekday):
+    return ffood(1,weekday)
+
+def freefood(weekday):
+    return ffood(0,weekday)
