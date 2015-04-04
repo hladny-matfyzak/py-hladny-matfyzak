@@ -68,35 +68,47 @@ def dolna(day=None, month=None, year=None):
         list.append(dbettermatch[0])
     return list
 
-#0 for freefood, 1 for faynfood
-def ffood(which,weekday=None):
-    if weekday == None:
+
+def ffood(which, weekday=None):
+    """Free/Fayn food wrapper. The first argument `which` describes which of
+    these two is to be used: 0 for freefood, 1 for faynfood."""
+
+    if weekday is None:
         year = int(time.strftime("%Y"))
         day = int(time.strftime("%d"))
         month = int(time.strftime("%m"))
         weekday = int((datetime.date(year, month, day)).weekday())
+
     req = requests.get(FF_URL)
     soup = BeautifulSoup(req.text)
     menu_week = soup.find_all('ul')
+
     if which == 0:
         index = 3
     elif which == 1:
         index = 10
+
     menu_week = menu_week[index]
     menu_bs = BeautifulSoup(str(menu_week))
     daymenu = menu_bs.find_all('ul')[weekday]
-    #weekday should be <1,5>
+
+    # weekday should be <1,5>
     lis = BeautifulSoup(str(daymenu))
     lis.find_all('li')
-    meals = re.findall(r'</span>(.*?)<span class="brand">', str(lis), re.DOTALL)
-    ret = []
-    for i in range (0,len(meals)):
-        if ((i % 2)==0):
-            ret.append(meals[i])
-    return ret   
-    
-def faynfood(weekday):
-    return ffood(1,weekday)
+    meals = re.findall(r'</span>(.*?)<span class="brand">',
+                       str(lis),
+                       re.DOTALL)
 
-def freefood(weekday):
-    return ffood(0,weekday)
+    ret = []
+    for i in range(0, len(meals)):
+        if ((i % 2) == 0):
+            ret.append(meals[i])
+    return ret
+
+
+def faynfood(weekday=None):
+    return ffood(1, weekday)
+
+
+def freefood(weekday=None):
+    return ffood(0, weekday)
