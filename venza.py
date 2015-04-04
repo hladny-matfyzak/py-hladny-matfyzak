@@ -4,6 +4,7 @@ import re
 import time
 import datetime
 HS_URL = "http://hladnystudent.zones.sk/jedalne-listky-{}-{}-{}"
+FF_URL = "http://www.freefood.sk/menu/"
 
 
 def horna(day=None, month=None, year=None):
@@ -66,3 +67,31 @@ def dolna(day=None, month=None, year=None):
         dbettermatch = re.findall(r'\n\s\s\s\s\s\s\s\s(.*?)\n', dmatch[0])
         list.append(dbettermatch[0])
     return list
+
+
+def ffood( which ,weekday=None):
+    if weekday == None:
+        year = int(time.strftime("%Y"))
+        day = int(time.strftime("%d"))
+        month = int(time.strftime("%m"))
+        weekday = int((datetime.date(year, month, day)).weekday())
+    req = requests.get(FF_URL)
+    soup = BeautifulSoup(req.text)
+    menu_week = soup.find_all('ul')
+    if which == 0:
+        index = 3
+    elif which == 1:
+        index = 10
+    menu_week = menu_week[index]
+    menu_bs = BeautifulSoup(str(menu_week))
+    daymenu = menu_bs.find_all('ul')[weekday]
+    #weekday should be <1,5>
+    lis = BeautifulSoup(str(daymenu))
+    lis.find_all('li')
+    meals = re.findall(r'</span>(.*?)<span class="brand">', str(lis), re.DOTALL)
+    ret = []
+    for i in range (0,len(meals)):
+        if ((i % 2)==0):
+            ret.append(meals[i])
+    return ret
+     
