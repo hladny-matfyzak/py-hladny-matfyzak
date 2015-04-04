@@ -68,8 +68,8 @@ def dolna(day=None, month=None, year=None):
         list.append(dbettermatch[0])
     return list
 
-
-def ffood( which ,weekday=None):
+#0 for freefood, 1 for faynfood
+def ffood(which,weekday=None):
     if weekday == None:
         year = int(time.strftime("%Y"))
         day = int(time.strftime("%d"))
