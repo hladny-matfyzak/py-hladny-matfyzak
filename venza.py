@@ -6,6 +6,32 @@ import datetime
 HS_URL = "http://hladnystudent.zones.sk/jedalne-listky-{}-{}-{}"
 FF_URL = "http://www.freefood.sk/menu/"
 
+MEAL_TYPE_SOUP = 0
+MEAL_TYPE_MAIN_DISH = 1
+MEAL_TYPE_OTHER = 2
+
+
+class Meal(object):
+    name = ''
+    price = None
+    type = None
+    place = ''
+
+    def __init__(self, name, place, price='', type=None):
+        self.name = name
+        self.place = place
+        self.price = price
+        self.type = type
+
+    def fmt(self, form):
+        return form.format(**self.__dict__)
+
+    def __str__(self):
+        return self.fmt("{name} - {place}")
+
+    def __repr__(self):
+        return self.fmt("<Meal('{name}', place='{place}')>")
+
 
 def horna(day=None, month=None, year=None):
     if year is None or not year.isdigit():
@@ -31,7 +57,7 @@ def horna(day=None, month=None, year=None):
         bordel = tdsoup.find_all('td')
         match = re.findall(r'<td>(.*?)<span', str(bordel[1]), re.DOTALL)
         bettermatch = re.findall(r'\n\s\s\s\s\s\s\s\s(.*?)\n', match[0])
-        list.append(bettermatch[0])
+        list.append(Meal(bettermatch[0], 'horna'))
     return list
 
 
@@ -65,13 +91,22 @@ def dolna(day=None, month=None, year=None):
 
         dmatch = re.findall(r'<td>(.*?)<span', str(dbordel[1]), re.DOTALL)
         dbettermatch = re.findall(r'\n\s\s\s\s\s\s\s\s(.*?)\n', dmatch[0])
-        list.append(dbettermatch[0])
+        list.append(Meal(dbettermatch[0], 'dolna'))
     return list
 
 
 def ffood(which, weekday=None):
     """Free/Fayn food wrapper. The first argument `which` describes which of
     these two is to be used: 0 for freefood, 1 for faynfood."""
+
+    idx = {
+        'freefood': 3,
+        'faynfood': 10
+    }
+
+    if which not in idx.keys():
+        return []
+    index = idx[which]
 
     if weekday is None:
         year = int(time.strftime("%Y"))
@@ -82,11 +117,6 @@ def ffood(which, weekday=None):
     req = requests.get(FF_URL)
     soup = BeautifulSoup(req.text)
     menu_week = soup.find_all('ul')
-
-    if which == 0:
-        index = 3
-    elif which == 1:
-        index = 10
 
     menu_week = menu_week[index]
     menu_bs = BeautifulSoup(str(menu_week))
@@ -102,13 +132,13 @@ def ffood(which, weekday=None):
     ret = []
     for i in range(0, len(meals)):
         if ((i % 2) == 0):
-            ret.append(meals[i])
+            ret.append(Meal(meals[i], which))
     return ret
 
 
 def faynfood(weekday=None):
-    return ffood(1, weekday)
+    return ffood('faynfood', weekday)
 
 
 def freefood(weekday=None):
-    return ffood(0, weekday)
+    return ffood('freefood', weekday)
