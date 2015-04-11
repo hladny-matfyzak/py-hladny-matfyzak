@@ -3,20 +3,18 @@ import requests
 import re
 import time
 import datetime
+from enum import Enum
 HS_URL = "http://hladnystudent.zones.sk/jedalne-listky-{}-{}-{}"
 FF_URL = "http://www.freefood.sk/menu/"
 
-MEAL_TYPE_SOUP = 0
-MEAL_TYPE_MAIN_DISH = 1
-MEAL_TYPE_OTHER = 2
+
+class MealType(Enum):
+    SOUP = 0
+    MAIN_DISH = 1
+    OTHER = 2
 
 
 class Meal(object):
-    name = ''
-    price = None
-    type = None
-    place = ''
-
     def __init__(self, name, place, price='', type=None):
         self.name = name
         self.place = place
