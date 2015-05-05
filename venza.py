@@ -28,7 +28,10 @@ class Meal(object):
         return self.fmt("{name} - {place}")
 
     def __repr__(self):
-        return self.fmt("<Meal('{name}', place='{place}')>")
+        return self.fmt("<Meal('{name}',"
+                        " place='{place}'"
+                        " price='{price}'"                        
+                        ")>")
 
 
 def horna(day=None, month=None, year=None):
@@ -126,11 +129,14 @@ def ffood(which, weekday=None):
     meals = re.findall(r'</span>(.*?)<span class="brand">',
                        str(lis),
                        re.DOTALL)
-
+    prices = re.findall(r'class="brand">(.*?)</span>',
+                        str(lis))
+                        
     ret = []
     for i in range(0, len(meals)):
         if ((i % 2) == 0):
-            ret.append(Meal(meals[i], which))
+            price =  float(prices[i+1][:-3])
+            ret.append(Meal(meals[i], which, price))
     return ret
 
 
