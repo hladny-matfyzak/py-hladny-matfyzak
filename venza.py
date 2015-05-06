@@ -30,7 +30,7 @@ class Meal(object):
     def __repr__(self):
         return self.fmt("<Meal('{name}',"
                         " place='{place}'"
-                        " price='{price}'"                        
+                        " price= {price}"                        
                         ")>")
 
 
@@ -135,7 +135,9 @@ def ffood(which, weekday=None):
     ret = []
     for i in range(0, len(meals)):
         if ((i % 2) == 0):
-            price =  float(prices[i+1][:-3])
+            price =  float(prices[i+1][:-3])   
+            #due to strange format of price on site it needs to cut last 3
+            # characters to make it possible to change it to float type
             ret.append(Meal(meals[i], which, price))
     return ret
 
