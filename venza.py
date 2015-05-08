@@ -30,7 +30,7 @@ class Meal(object):
     def __repr__(self):
         return self.fmt("<Meal('{name}',"
                         " place='{place}'"
-                        " price= {price}"                        
+                        " price={price}"                        
                         ")>")
 
 
