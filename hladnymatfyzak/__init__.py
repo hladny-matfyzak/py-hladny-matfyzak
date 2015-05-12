@@ -53,16 +53,18 @@ def horna(day=None, month=None, year=None):
     try:
         hornasoup = BeautifulSoup(str(divs[18]))
         pol = re.findall(r'<span class="dish-name">(.*?)</span>', str(hornasoup))
-        prices = re.findall(r'<span class="dish-price">...(.*?)/', str(hornasoup))
+        prices = re.findall(r'<span class="dish-price">.(.*?)/', str(hornasoup))
         list =[]
         for i in range (len(pol)):
-            list.append(Meal(pol[i],'horna',prices[i],MealType.SOUP))
-        
+            price = float(prices[i].replace(',', '.'))
+            list.append(Meal(pol[i], 'horna', price, MealType.SOUP))
+
         hornameal = BeautifulSoup(str(divs[23]))
         meals = re.findall(r'<span class="dish-name">(.*?)</span>', str(hornameal))
-        prices =re.findall(r'<span class="dish-price">...(.*?)/', str(hornameal))
+        prices =re.findall(r'<span class="dish-price">.(.*?)/', str(hornameal))
         for i in range (len(prices)):
-            list.append(Meal(meals[i],'horna',prices[i],MealType.MAIN_DISH))
+            price = float(prices[i].replace(',', '.'))
+            list.append(Meal(meals[i], 'horna', price, MealType.MAIN_DISH))
     except IndexError:
         return ["unexpected structure of site"]
         
@@ -140,7 +142,7 @@ def ffood(which, weekday=None):
                        re.DOTALL)
     prices = re.findall(r'class="brand">(.*?)</span>',
                         str(lis))
-                        
+
     ret = []
     for i in range(len(meals)):
         if ((i % 2) == 0):
@@ -157,4 +159,3 @@ def faynfood(weekday=None):
 
 def freefood(weekday=None):
     return ffood('freefood', weekday)
-    
