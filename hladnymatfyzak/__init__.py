@@ -53,15 +53,15 @@ def horna(day=None, month=None, year=None):
     try:
         hornasoup = BeautifulSoup(str(divs[18]))
         pol = re.findall(r'<span class="dish-name">(.*?)</span>', str(hornasoup))
-        prices = re.findall(r'<span class="dish-price">.(.*?)/', str(hornasoup))
+        prices = re.findall(r'<span class="dish-price">...(.*?)/', str(hornasoup))
         list =[]
         for i in range (len(pol)):
-            price = float(prices[i].replace(',', '.'))
+            price = float( prices[i].replace(',', '.'))
             list.append(Meal(pol[i], 'horna', price, MealType.SOUP))
 
         hornameal = BeautifulSoup(str(divs[23]))
         meals = re.findall(r'<span class="dish-name">(.*?)</span>', str(hornameal))
-        prices =re.findall(r'<span class="dish-price">.(.*?)/', str(hornameal))
+        prices =re.findall(r'<span class="dish-price">...(.*?)/', str(hornameal))
         for i in range (len(prices)):
             price = float(prices[i].replace(',', '.'))
             list.append(Meal(meals[i], 'horna', price, MealType.MAIN_DISH))
@@ -90,20 +90,33 @@ def dolna(day=None, month=None, year=None):
         return list
 
     req = requests.get(lin)
-    soup = BeautifulSoup(req.text)
-    tables = soup.find_all('table')
-    meals_table = tables[weekday*9]
-    soup_table = tables[weekday*9 + 6]
-    meals = re.findall(r'<td width="400">(.*?)</td>', str(meals_table) )
-    meal_price = re.findall(r'<td>(.*?)............./', str(meals_table))
-    soups = re.findall(r'<td width="400">(.*?)</td>',str(soup_table))
-    soup_price = re.findall(r'<td>(.*?)............./', str(soup_table))
+    parts = req.text.split("<a name='")
+    datestr = "{0}-{1:02d}-{2:02d}".format(year,month,day)
+    daymenu = None
+    for part in parts:
+        if part.startswith(datestr):
+            daymenu = part
+            
+    if daymenu == None:
+        return ["menu for given day not found"]
+    
+    daymenu_bs = BeautifulSoup(str(daymenu))
+    tables = daymenu_bs.find_all('table')
+    meals = re.findall(r'<td width="400">(.*?)</td>', str(tables[0]))
+    meal_price = re.findall(r'<td>..........................(.*?).....\*', str(tables[0]))
+    soups = re.findall(r'<td width="400">(.*?)</td>', str(tables[6]))
+    soup_price = re.findall(r'<td>..........................(.*?).....\*', str(tables[6]))
     
     for i in range(len(soups)):
-        list.append(Meal(soups[i],'dolna', soup_price[i],MealType.SOUP))
+        list.append(Meal(soups[i],'dolna', float(soup_price[i]),MealType.SOUP))
     for i in range(len(meals)):
-        list.append(Meal(meals[i],'dolna', meal_price[i],MealType.MAIN_DISH)) 
-    
+        list.append(Meal(meals[i],'dolna', float(meal_price[i]),MealType.MAIN_DISH))
+        
+    if len(tables) == 10:
+        exp_meals = re.findall(r'<td width="400">(.*?)</td>', str(tables[8]))
+        exp_price = re.findall(r'<td>..........................(.*?).....\*', str(tables[8]))
+        for i in range(len(exp_meals)):
+            list.append(Meal(exp_meals[i],'dolna', float(exp_price[i]),MealType.MAIN_DISH))
     return list
 
 
