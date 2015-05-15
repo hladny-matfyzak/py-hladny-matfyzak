@@ -39,6 +39,21 @@ class Meal(object):
                         ")>")
 
 
+def _meals_from_bs(data, type, opts):
+    MEAL_RE = opts['MEAL_RE']
+    PRICE_RE = opts['PRICE_RE']
+    place = opts['PLACE']
+    out = []
+    meals = re.findall(MEAL_RE, data)
+    prices = re.findall(PRICE_RE, data)
+    for i in range(len(meals)):
+        if i >= len(prices):
+            break
+        price = float(prices[i].replace(',', '.'))
+        out.append(Meal(meals[i], place, price, type))
+    return out
+
+
 def horna(day=None, month=None, year=None):
     if year is None or not isinstance(year, int):
         year = int(time.strftime("%Y"))
@@ -53,25 +68,18 @@ def horna(day=None, month=None, year=None):
     divs = soup.find_all('div')
     list = []
 
-    try:
-        hornasoup = BeautifulSoup(str(divs[18]))
-        pol = re.findall(
-            r'<span class="dish-name">(.*?)</span>', str(hornasoup))
-        prices = re.findall(
-            r'<span class="dish-price">...(.*?)/', str(hornasoup))
-        list = []
-        for i in range(len(pol)):
-            price = float(prices[i].replace(',', '.'))
-            list.append(Meal(pol[i], 'horna', price, MealType.SOUP))
+    opts = {
+        'MEAL_RE': r'<span class="dish-name">(.*?)</span>',
+        'PRICE_RE': r'<span class="dish-price">.(.*?)/',
+        'PLACE': 'horna'
+    }
 
-        hornameal = BeautifulSoup(str(divs[23]))
-        meals = re.findall(
-            r'<span class="dish-name">(.*?)</span>', str(hornameal))
-        prices = re.findall(
-            r'<span class="dish-price">...(.*?)/', str(hornameal))
-        for i in range(len(prices)):
-            price = float(prices[i].replace(',', '.'))
-            list.append(Meal(meals[i], 'horna', price, MealType.MAIN_DISH))
+    try:
+        hornasoup = str(BeautifulSoup(str(divs[18])))
+        hornameal = str(BeautifulSoup(str(divs[23])))
+
+        list.extend(_meals_from_bs(hornasoup, MealType.SOUP, opts))
+        list.extend(_meals_from_bs(hornameal, MealType.MAIN_DISH, opts))
     except IndexError:
         return ["unexpected structure of site"]
 
@@ -106,23 +114,20 @@ def dolna(day=None, month=None, year=None):
     if daymenu is None:
         return ["menu for given day not found"]
 
-    def meals_from_bs(data, type):
-        MEAL_RE = r'<td width="400">(.*?)</td>'
-        PRICE_RE = r'<td>.*?\s*/\s*(.*?)\s'
-        out = []
-        meals = re.findall(MEAL_RE, data)
-        prices = re.findall(PRICE_RE, data)
-        for i in range(len(meals)):
-            out.append(Meal(meals[i], 'dolna', float(prices[i]), type))
-        return out
+    opts = {
+        'MEAL_RE': r'<td width="400">(.*?)</td>',
+        'PRICE_RE': r'<td>.*?\s*/\s*(.*?)\s',
+        'PLACE': 'dolna'
+    }
 
     daymenu_bs = BeautifulSoup(str(daymenu))
     tables = daymenu_bs.find_all('table')
-    list.extend(meals_from_bs(str(tables[6]), MealType.SOUP))
-    list.extend(meals_from_bs(str(tables[0]), MealType.MAIN_DISH))
+
+    list.extend(_meals_from_bs(str(tables[6]), MealType.SOUP, opts))
+    list.extend(_meals_from_bs(str(tables[0]), MealType.MAIN_DISH, opts))
 
     if len(tables) == 10:
-        list.extend(meals_from_bs(str(tables[8]), MealType.MAIN_DISH))
+        list.extend(_meals_from_bs(str(tables[8]), MealType.MAIN_DISH, opts))
     return list
 
 
