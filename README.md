@@ -1,5 +1,7 @@
 # hladny-matfyzak
 
+[![Build Status](https://travis-ci.org/hladny-matfyzak/py-hladny-matfyzak.svg?branch=master)](https://travis-ci.org/hladny-matfyzak/py-hladny-matfyzak)
+
 Python funkcie pre hladnych matfyzakov
 
 Funkcie pre vsetkych hladnych ludi na matfyze v blizkom okoli.
