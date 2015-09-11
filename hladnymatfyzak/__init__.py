@@ -70,7 +70,7 @@ def horna(day=None, month=None, year=None):
 
     opts = {
         'MEAL_RE': r'<span class="dish-name">(.*?)</span>',
-        'PRICE_RE': r'<span class="dish-price">.(.*?)/',
+        'PRICE_RE': r'<span class="dish-price">.{8}(.*?).</span>',
         'PLACE': 'horna'
     }
 
@@ -116,7 +116,7 @@ def dolna(day=None, month=None, year=None):
 
     opts = {
         'MEAL_RE': r'<td width="400">(.*?)</td>',
-        'PRICE_RE': r'<td>.*?\s*/\s*(.*?)\s',
+        'PRICE_RE': r'<td>.{25}(.*?).{5}\*',
         'PLACE': 'dolna'
     }
 
@@ -131,7 +131,7 @@ def dolna(day=None, month=None, year=None):
     return list
 
 
-def ffood(which, weekday=None):
+def ffood(which, day=None, month=None, year=None):
     """Free/Fayn food wrapper. The first argument `which` describes which of
     these two is to be used: 0 for freefood, 1 for faynfood."""
 
@@ -144,11 +144,13 @@ def ffood(which, weekday=None):
         return []
     index = idx[which]
 
-    if weekday is None:
+    if year is None:
         year = int(time.strftime("%Y"))
+    if day is None:
         day = int(time.strftime("%d"))
+    if month is None:
         month = int(time.strftime("%m"))
-        weekday = int((datetime.date(year, month, day)).weekday())
+    weekday = int((datetime.date(year, month, day)).weekday())
 
     req = requests.get(FF_URL)
     soup = BeautifulSoup(req.text)
@@ -177,9 +179,9 @@ def ffood(which, weekday=None):
     return ret
 
 
-def faynfood(weekday=None):
-    return ffood('faynfood', weekday)
+def faynfood(day=None, month=None, year=None):
+    return ffood('faynfood', day, month, year)
 
 
-def freefood(weekday=None):
-    return ffood('freefood', weekday)
+def freefood(day=None, month=None, year=None):
+    return ffood('freefood', day, month, year)
