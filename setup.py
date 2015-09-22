@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
     name='hladny_matfyzak',
 
-    version='0.0.5',
+    version='0.0.6',
 
     description='Python parsing functions for hungry students in Bratislava',
 
