@@ -19,7 +19,7 @@ setup(
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
     ],
-    
+
     packages=["hladnymatfyzak"],
 
     install_requires=['requests', 'BeautifulSoup', 'enum34'],
