@@ -123,11 +123,11 @@ def dolna(day=None, month=None, year=None):
     daymenu_bs = BeautifulSoup(str(daymenu))
     tables = daymenu_bs.find_all('table')
 
-    list.extend(_meals_from_bs(str(tables[6]), MealType.SOUP, opts))
+    list.extend(_meals_from_bs(str(tables[1]), MealType.SOUP, opts))
     list.extend(_meals_from_bs(str(tables[0]), MealType.MAIN_DISH, opts))
 
     if len(tables) == 10:
-        list.extend(_meals_from_bs(str(tables[8]), MealType.MAIN_DISH, opts))
+        list.extend(_meals_from_bs(str(tables[5]), MealType.MAIN_DISH, opts))
     return list
 
 
@@ -151,16 +151,17 @@ def ffood(which, day=None, month=None, year=None):
     if month is None:
         month = int(time.strftime("%m"))
     weekday = int((datetime.date(year, month, day)).weekday())
-
+    # weekday should be <0,4>
     req = requests.get(FF_URL)
     soup = BeautifulSoup(req.text)
     menu_week = soup.find_all('ul')
 
     menu_week = menu_week[index]
     menu_bs = BeautifulSoup(str(menu_week))
-    daymenu = menu_bs.find_all('ul')[weekday]
+    # "weekday()" starts at 0, but at site first day starts at 1
+    day_id = weekday + 1
+    daymenu = menu_bs.find_all('ul')[day_id]
 
-    # weekday should be <1,5>
     lis = BeautifulSoup(str(daymenu))
     lis.find_all('li')
     meals = re.findall(r'</span>(.*?)<span class="brand">',
