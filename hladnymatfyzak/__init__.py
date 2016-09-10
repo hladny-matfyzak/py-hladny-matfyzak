@@ -70,7 +70,7 @@ def horna(day=None, month=None, year=None):
 
     opts = {
         'MEAL_RE': r'<span class="dish-name">(.*?)</span>',
-        'PRICE_RE': r'<span class="dish-price">.{8}(.*?).</span>',
+        'PRICE_RE': r'<span class="dish-price">.*/(.*?).</span>',
         'PLACE': 'horna'
     }
 
@@ -120,7 +120,7 @@ def dolna(day=None, month=None, year=None):
         'PLACE': 'dolna'
     }
 
-    daymenu_bs = BeautifulSoup(str(daymenu))
+    daymenu_bs = BeautifulSoup(str(daymenu.encode("utf-8")))
     tables = daymenu_bs.find_all('table')
 
     list.extend(_meals_from_bs(str(tables[1]), MealType.SOUP, opts))
@@ -152,6 +152,8 @@ def ffood(which, day=None, month=None, year=None):
         month = int(time.strftime("%m"))
     weekday = int((datetime.date(year, month, day)).weekday())
     # weekday should be <0,4>
+    if weekday > 4:
+        return ["closed on weekends"]
     req = requests.get(FF_URL)
     soup = BeautifulSoup(req.text)
     menu_week = soup.find_all('ul')
@@ -186,3 +188,19 @@ def faynfood(day=None, month=None, year=None):
 
 def freefood(day=None, month=None, year=None):
     return ffood('freefood', day, month, year)
+
+
+def test_faynfood():
+    assert faynfood()
+
+
+def test_freefood():
+    assert freefood()
+
+
+def test_horna():
+    assert horna()
+
+
+def test_dolna():
+    assert dolna()
